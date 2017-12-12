@@ -2,13 +2,13 @@ package gosdk
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/coreos/etcd/clientv3"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
 	"os"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
@@ -133,11 +133,15 @@ func InitGrpcServer(client *clientv3.Client) (ConfigCenterServiceClient, error) 
 
 	log.Printf("init...the best address: %s", bestAddress)
 
+	if len(bestAddress) == 0 {
+		return nil, errors.New("can't find grpcserver address")
+	}
+
 	r := &GrpcServerResolver{grpcServerInfos}
 
 	rb := grpc.RoundRobin(r)
 
-	grpcClientConn, err := grpc.Dial(strings.Join(bestAddress, ";"), grpc.WithTimeout(time.Second*5), grpc.WithInsecure(), grpc.WithBalancer(rb))
+	grpcClientConn, err := grpc.Dial(bestAddress[0], grpc.WithTimeout(time.Second*5), grpc.WithInsecure(), grpc.WithBalancer(rb))
 
 	if err != nil {
 		return nil, err

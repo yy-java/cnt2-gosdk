@@ -1,4 +1,4 @@
-package gosdk
+package cnt2
 
 import (
 	"encoding/json"
@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+	//	"strings"
+	"google.golang.org/grpc/balancer"
 	"sync"
 	"time"
 )
@@ -39,10 +41,13 @@ var (
 	listeners          map[string][]ConfigListener
 	listenerLock       sync.RWMutex
 	grpcClientConn     *grpc.ClientConn
+	grpcServerBalancer *GrpcServerBalancer
 )
 
 func init() {
 	hostInfo = InitHostInfo()
+	grpcServerBalancer = &GrpcServerBalancer{}
+	grpcServerBalancer.Init()
 	log.Printf("hostInfo %v", hostInfo.Ips)
 }
 func Start(ccfg *ClientConfig) (*Cnt2Service, error) {
@@ -129,23 +134,18 @@ func InitGrpcServer(client *clientv3.Client) (ConfigCenterServiceClient, error) 
 	if err != nil {
 		return nil, err
 	}
-	bestAddress, _ := ChooseBestAddress(grpcServerInfos)
-
-	log.Printf("init...the best address: %s", bestAddress)
-
-	if len(bestAddress) == 0 {
+	if len(grpcServerInfos) == 0 {
 		return nil, errors.New("can't find grpcserver address")
 	}
+	log.Printf("init...grpcServerInfos: %v", grpcServerInfos)
 
-	r := &GrpcServerResolver{grpcServerInfos}
-
-	rb := grpc.RoundRobin(r)
-
-	grpcClientConn, err := grpc.Dial(bestAddress[0], grpc.WithTimeout(time.Second*5), grpc.WithInsecure(), grpc.WithBalancer(rb))
-
+	grpcClientConn, err := grpc.Dial(grpcServerBalancer.resolver.Scheme()+":///grpcservers", grpc.WithTimeout(time.Second*5), grpc.WithInsecure(), grpc.WithBalancerBuilder(balancer.Get("round_robin")))
 	if err != nil {
 		return nil, err
 	}
+	// need do it after grpc.Dial
+	grpcServerChan.ch <- grpcServerInfos
+
 	log.Printf("connected grpc server: %v", grpcClientConn)
 
 	configServiceClient := NewConfigCenterServiceClient(grpcClientConn)
@@ -235,6 +235,10 @@ func (Cnt2Service) Close() {
 	if grpcClientConn != nil {
 		grpcClientConn.Close()
 		grpcClientConn = nil
+	}
+	if grpcServerBalancer != nil {
+		grpcServerBalancer.cleanup()
+		grpcServerBalancer = nil
 	}
 	close(grpcServerChan.ch)
 }

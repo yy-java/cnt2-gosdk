@@ -16,7 +16,7 @@ It has these top-level messages:
 	ValueChangeResultRequest
 	ValueChangeResultResponse
 */
-package gosdk
+package cnt2
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

@@ -1,4 +1,4 @@
-package gosdk
+package cnt2
 
 /*
 通过运维脚本获取服务器的host信息，

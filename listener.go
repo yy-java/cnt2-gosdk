@@ -1,4 +1,4 @@
-package gosdk
+package cnt2
 
 type ConfigListener interface {
 	HandlePutEvent(config *Config) error    //处理配置更新事件，返回error表示处理失败

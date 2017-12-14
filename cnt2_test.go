@@ -1,4 +1,4 @@
-package gosdk
+package cnt2
 
 import (
 	"fmt"

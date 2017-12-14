@@ -1,5 +1,5 @@
 ## 开始
-###1. 安装及依赖库：
+### 1. 安装及依赖库：
 ```
 go get -u -v -d github.com/boltdb/bolt
 go get -u -v -d github.com/coreos/etcd
@@ -7,7 +7,7 @@ go get -u -v -d google.golang.org/grpc
 go get -u -v -d golang.org/x/net
 go get -u -v -d github.com/yy-java/cnt2/cnt2-gosdk
 ```
-###2. 实践
+### 2. 实践
    
 #### 1）、 cnt2.Start()方法启动配置中心，并返回一个cnt2Service实例
 ```

@@ -10,9 +10,8 @@ import (
 func main() {
 	cnt2Service, err := cnt2.Start(&cnt2.ClientConfig{
 		Endpoints: []string{"1.1.1.1:2379", "2.2.2.2:2379", "3.3.3.3:2379"},
-		//Endpoints: []string{"61.147.187.152:2379", "61.147.187.142:2379", "61.147.187.150:2379"},
-		App:     "demo",
-		Profile: "development",
+		App:       "demo",
+		Profile:   "development",
 	})
 	if err != nil {
 		log.Printf("start cnt2 error")

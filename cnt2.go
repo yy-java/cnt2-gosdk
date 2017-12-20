@@ -53,6 +53,7 @@ func init() {
 func Start(ccfg *ClientConfig) (*Cnt2Service, error) {
 	clientConfig = ccfg
 	listeners = make(map[string][]ConfigListener)
+	result := &Cnt2Service{clientConfig}
 	if clientConfig.DialTimeout <= 0 {
 		clientConfig.DialTimeout = defaultDialTimeout
 	}
@@ -62,22 +63,22 @@ func Start(ccfg *ClientConfig) (*Cnt2Service, error) {
 	}
 	etcdClient, err := clientv3.New(cfg)
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 	//初始化本地存储
 	localStore, err = InitLocalStore(clientConfig.App, clientConfig.LocalFilePath)
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 	configCenterClient, err = InitGrpcServer(etcdClient)
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 	//监听grpcServer
 	go WatchGrpcServer(etcdClient)
 	//register
 	if err = registerClient(etcdClient); err != nil {
-		return nil, err
+		return result, err
 	}
 
 	//启动后全量更新本地数据库
@@ -99,7 +100,7 @@ func Start(ccfg *ClientConfig) (*Cnt2Service, error) {
 		go WatchCnt2Common(etcdClient, configCenterClient, clientConfig.App)
 	}
 
-	return &Cnt2Service{clientConfig}, nil
+	return result, nil
 }
 func registerClient(etcdClient *clientv3.Client) error {
 	//去grpc服务获得节点ID
@@ -250,5 +251,9 @@ func (c *Cnt2Service) GetConfig(key string) (string, bool) {
 		}
 		localStore = localStore2
 	}
-	return localStore.Get(c.App, c.Profile, key), true
+	cfg, err := localStore.GetConfig(c.App, c.Profile, key)
+	if err != nil || cfg == nil {
+		return "", false
+	}
+	return cfg.Value, true
 }

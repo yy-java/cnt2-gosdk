@@ -1,10 +1,6 @@
 ## 开始
-### 1. 安装及依赖库：
+### 1. 安装：
 ```
-go get -u -v -d github.com/boltdb/bolt
-go get -u -v -d github.com/coreos/etcd
-go get -u -v -d google.golang.org/grpc
-go get -u -v -d golang.org/x/net
 go get -u -v -d github.com/yy-java/cnt2/cnt2-gosdk
 ```
 ### 2. 运行

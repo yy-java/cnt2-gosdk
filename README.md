@@ -1,7 +1,7 @@
 ## 开始
 ### 1. 安装：
 ```
-go get -u -v -d github.com/yy-java/cnt2/cnt2-gosdk
+go get -u -v -d github.com/yy-java/cnt2-gosdk
 ```
 ### 2. 运行
    

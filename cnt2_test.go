@@ -19,7 +19,7 @@ func (t *TestListenter) HandleDeleteEvent(config *Config) error {
 }
 func Test_NewClient(t *testing.T) {
 	clientConfig := ClientConfig{
-		Endpoints:     []string{"61.147.187.152:2379", "61.147.187.142:2379", "61.147.187.150:2379"},
+		Endpoints:     []string{"172.27.141.11:2379", "172.27.141.12:2379", "172.27.141.13:2379"},
 		App:           "demo",
 		Profile:       "development",
 		LocalFilePath: "",

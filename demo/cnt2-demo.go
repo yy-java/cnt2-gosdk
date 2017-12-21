@@ -9,7 +9,7 @@ import (
 
 func main() {
 	cnt2Service, err := cnt2.Start(&cnt2.ClientConfig{
-		Endpoints: []string{"1.1.1.1:2379", "2.2.2.2:2379", "3.3.3.3:2379"},
+		Endpoints: []string{"172.27.141.11:2379", "172.27.141.12:2379", "172.27.141.13:2379"},
 		App:       "demo",
 		Profile:   "development",
 	})

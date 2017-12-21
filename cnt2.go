@@ -54,6 +54,7 @@ func Start(ccfg *ClientConfig) (*Cnt2Service, error) {
 	clientConfig = ccfg
 	listeners = make(map[string][]ConfigListener)
 	result := &Cnt2Service{clientConfig}
+
 	if clientConfig.DialTimeout <= 0 {
 		clientConfig.DialTimeout = defaultDialTimeout
 	}
